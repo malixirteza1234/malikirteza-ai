@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="MALIK IRTEZA AI - Advanced AI Virtual Assistant">
+    <meta name="theme-color" content="#020208">
+    <title>MALIK IRTEZA AI</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- THREE.JS CANVAS -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- ======================== CINEMATIC LOADER ======================== -->
+    <div id="loader">
+        <!-- Animated Particles -->
+        <div class="loader-particles" id="loaderParticles"></div>
+
+        <!-- Lens Flares -->
+        <div class="loader-flare loader-flare-1"></div>
+        <div class="loader-flare loader-flare-2"></div>
+        <div class="loader-flare loader-flare-3"></div>
+
+        <!-- Light Streaks -->
+        <div class="loader-streak"></div>
+        <div class="loader-streak loader-streak-2"></div>
+        <div class="loader-streak loader-streak-3"></div>
+
+        <!-- Scan Lines -->
+        <div class="scan-line"></div>
+        <div class="scan-line scan-line-2"></div>
+
+        <!-- Rotating Rings -->
+        <div class="loader-ring-container">
+            <div class="loader-ring loader-ring-1"></div>
+            <div class="loader-ring loader-ring-2"></div>
+            <div class="loader-ring loader-ring-3"></div>
+            <div class="loader-ring loader-ring-4"></div>
+        </div>
+
+        <!-- Corner Decorations -->
+        <div class="loader-corner corner-tl"></div>
+        <div class="loader-corner corner-tr"></div>
+        <div class="loader-corner corner-bl"></div>
+        <div class="loader-corner corner-br"></div>
+
+        <!-- Main Content -->
+        <div class="loader-content">
+            <div class="loader-logo-wrap">
+                <div class="loader-logo-glow"></div>
+                <!-- Hexagon Border -->
+                <div class="loader-hexagon">
+                    <svg viewBox="0 0 120 120">
+                        <polygon class="hex-path" points="60,5 110,30 110,90 60,115 10,90 10,30"/>
+                    </svg>
+                </div>
+                <img src="logo.png" alt="MALIK IRTEZA AI" class="loader-logo-img"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="loader-logo-fallback" style="display:none;">MI</div>
+            </div>
+
+            <h1 class="loader-title">MALIK IRTEZA AI</h1>
+            <p class="loader-subtitle">Advanced AI Assistant</p>
+
+            <div class="loader-progress">
+                <div class="progress-track">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-percent" id="progressPercent">0%</div>
+            </div>
+
+            <div class="loader-status" id="loaderStatus">
+                <span class="status-cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== MAIN APPLICATION ======================== -->
+    <div id="app" class="hidden">
+
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <img src="logo.png" alt="Logo" class="nav-logo"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="nav-logo-fallback" style="display:none;">MI</div>
+                <span class="nav-title">MALIK IRTEZA AI</span>
+            </div>
+            <div class="nav-right">
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="hi">हि</button>
+                    <button class="lang-btn" data-lang="ur">اردو</button>
+                </div>
+                <div class="ai-status">
+                    <div class="status-dot"></div>
+                    <span data-i18n="online">Online</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span data-i18n="newChat">New Chat</span>
+                </button>
+            </div>
+            <div class="sidebar-chats" id="chatHistory"></div>
+            <div class="sidebar-footer">
+                <button class="sidebar-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                    <span data-i18n="settings">Settings</span>
+                </button>
+                <button class="sidebar-btn" id="clearAllBtn">
+                    <i class="fas fa-trash"></i>
+                    <span data-i18n="clearAll">Clear All</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel hidden" id="settingsPanel">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h2 data-i18n="settings">Settings</h2>
+                    <button class="close-btn" id="closeSettings"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="settings-body">
+                    <div class="setting-item">
+                        <label data-i18n="voiceEnabled">Voice Response</label>
+                        <label class="toggle-switch"><input type="checkbox" id="voiceToggle" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <label data-i18n="continuousListening">Continuous Listening</label>
+                        <label class="toggle-switch"><input type="checkbox" id="continuousListenToggle"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <label data-i18n="soundEffects">Sound Effects</label>
+                        <label class="toggle-switch"><input type="checkbox" id="soundToggle" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <label data-i18n="voiceSpeed">Voice Speed</label>
+                        <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <main class="chat-area" id="chatArea">
+
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="ai-avatar-large">
+                    <div class="avatar-orb">
+                        <div class="orb-ring"></div>
+                        <div class="orb-ring"></div>
+                        <div class="orb-ring"></div>
+                        <div class="orb-ring"></div>
+                        <div class="orb-core"></div>
+                    </div>
+                </div>
+                <h1 class="welcome-title">MALIK IRTEZA AI</h1>
+                <p class="welcome-subtitle" data-i18n="welcomeMsg">How can I help you today?</p>
+                <div class="suggestion-chips">
+                    <button class="chip" data-prompt="Explain quantum computing in simple terms">
+                        <i class="fas fa-atom"></i><span>Explain quantum computing</span>
+                    </button>
+                    <button class="chip" data-prompt="Write a Python web scraper script">
+                        <i class="fas fa-code"></i><span>Write a Python script</span>
+                    </button>
+                    <button class="chip" data-prompt="What are the latest AI trends in 2025?">
+                        <i class="fas fa-robot"></i><span>Latest AI trends</span>
+                    </button>
+                    <button class="chip" data-prompt="Help me write a professional email">
+                        <i class="fas fa-envelope"></i><span>Write professional email</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages-container" id="messagesContainer" style="display:none;"></div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator hidden" id="typingIndicator">
+                <div class="mini-orb"></div>
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-container">
+                <button class="input-btn mic-btn" id="micBtn" title="Voice Input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <textarea id="messageInput" placeholder="Type your message..." data-i18n-placeholder="inputPlaceholder" rows="1" autofocus></textarea>
+                <button class="input-btn send-btn" id="sendBtn" title="Send Message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <p class="input-hint" data-i18n="inputHint">Press Enter to send, Shift+Enter for new line</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Created by <a href="https://malikirteza.github.io/" target="_blank" rel="noopener noreferrer">Malik Irteza</a></p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="config.js"></script>
+    <script src="three-scene.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
